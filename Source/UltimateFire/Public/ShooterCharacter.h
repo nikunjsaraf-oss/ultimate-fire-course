@@ -34,10 +34,22 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
+	/**
+	 * @brief It is attached to the camera boom and follows the character throughout the game.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* FollowCamera;
+
 public:
 	/**
-	 * @brief Returns the SpringArmComponent
-	 * @return USpringArmComponent
+	 * @brief Returns the CameraBoom Subobject
+	 * @return USpringArmComponent*
 	 */
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+	/**
+	 * @brief Returns the FollowCamera SubObject
+	 * @return UCameraComponent*
+	 */
+	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };
