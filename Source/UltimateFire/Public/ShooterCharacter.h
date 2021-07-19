@@ -24,12 +24,24 @@ protected:
 	 * @param Value Input Axis' value passed through PlayerInputComponent
 	 */
 	void MoveForward(float Value);
-
+	
 	/**
 	 * @brief Called for moving sideways
 	 * @param Value Input Axis' value passed through PlayerInputComponent
 	 */
 	void MoveRight(float Value);
+
+	/**
+	 * @brief To turn at given rate.
+	 * @param Rate Normalized rate (1 = 100% of desired rate).
+	 */
+	void TurnAtRate(float Rate);
+
+	/**
+	 * @brief To look up/down at given rate.
+	 * @param Rate Normalized rate (1 = 100% of desired rate).
+	 */
+	void LookUpAtRate(float Rate);
 
 public:
 	// Called every frame
@@ -51,6 +63,18 @@ private:
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+	/**
+	 * @brief Turn rate in degrees per second. 
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	float BaseTurnRate;
+
+	/**
+	 * @brief Look up/down Rate in degrees per second 
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	float BaseLookupRate;
 
 public:
 	/**

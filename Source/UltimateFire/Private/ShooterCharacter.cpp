@@ -8,6 +8,8 @@
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
+	: BaseTurnRate(45.0f),
+	  BaseLookupRate(45.0f)
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -45,9 +47,15 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAxis("Forward", this, &AShooterCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("Right", this, &AShooterCharacter::MoveRight);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &AShooterCharacter::LookUpAtRate);
+	PlayerInputComponent->BindAxis("TurnRate", this, &AShooterCharacter::TurnAtRate);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 }
 
-void AShooterCharacter::MoveForward(float Value)
+void AShooterCharacter::MoveForward(const float Value)
 {
 	if (Controller && Value != 0.0f)
 	{
@@ -59,7 +67,7 @@ void AShooterCharacter::MoveForward(float Value)
 	}
 }
 
-void AShooterCharacter::MoveRight(float Value)
+void AShooterCharacter::MoveRight(const float Value)
 {
 	if (Controller && Value != 0.0f)
 	{
@@ -69,4 +77,22 @@ void AShooterCharacter::MoveRight(float Value)
 		const FVector Direction{FRotationMatrix{YawRotation}.GetUnitAxis(EAxis::Y)};
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void AShooterCharacter::TurnAtRate(const float Rate)
+{
+	// Calculate turning rate by converting from deg/sec to deg/frame.
+	// Base turn rate = deg/sec
+	// Delta seconds = sec/frame
+	// Deg/sec * sec/frame = deg/frame.
+	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AShooterCharacter::LookUpAtRate(const float Rate)
+{
+	// Calculate turning rate by converting from deg/sec to deg/frame.
+	// Base turn rate = deg/sec
+	// Delta seconds = sec/frame
+	// Deg/sec * sec/frame = deg/frame.
+	AddControllerPitchInput(Rate * BaseLookupRate * GetWorld()->GetDeltaSeconds());
 }
