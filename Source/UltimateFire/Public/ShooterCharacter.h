@@ -9,7 +9,7 @@
 UCLASS()
 class ULTIMATEFIRE_API AShooterCharacter : public ACharacter
 {
-	GENERATED_BODY()
+	GENERATED_BODY()	
 
 public:
 	// Sets default values for this character's properties
@@ -19,11 +19,25 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+private:
+	
+	/**
+	 * @brief Camera boom is used for positioning behind the character
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	class USpringArmComponent* CameraBoom;
+
+public:
+	/**
+	 * @brief Returns the SpringArmComponent
+	 * @return USpringArmComponent
+	 */
+	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 };
