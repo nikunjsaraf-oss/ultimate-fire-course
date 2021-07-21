@@ -4,6 +4,7 @@
 #include "ShooterCharacter.h"
 
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
@@ -14,7 +15,15 @@ AShooterCharacter::AShooterCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Don't rotate when controller rotates
+	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;	// Move in Input's direction
+	GetCharacterMovement()->RotationRate = FRotator(0, 540, 0); // Move at this rate
+	GetCharacterMovement()->JumpZVelocity = 600;
+	GetCharacterMovement()->AirControl = 0.2f;
 
 	// Setup Camera Boom
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
