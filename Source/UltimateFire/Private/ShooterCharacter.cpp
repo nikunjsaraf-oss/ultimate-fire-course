@@ -145,11 +145,14 @@ void AShooterCharacter::FireWeapon()
 		const FVector End{Start + RotationAxis * 50'000.f};
 
 		GetWorld()->LineTraceSingleByChannel(OutFireHit, Start, End, ECollisionChannel::ECC_Visibility);
-		if(OutFireHit.bBlockingHit)
+		if (OutFireHit.bBlockingHit)
 		{
 			DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2);
-			DrawDebugPoint(GetWorld(), OutFireHit.Location, 5, FColor::Red, false, 2);
-			
+
+			if (ImpactParticles)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, OutFireHit.Location);
+			}
 		}
 	}
 
@@ -157,6 +160,6 @@ void AShooterCharacter::FireWeapon()
 	if (AnimInstance && HipFireMontage)
 	{
 		AnimInstance->Montage_Play(HipFireMontage);
-		AnimInstance->Montage_JumpToSection(FName("StartFire"));	
+		AnimInstance->Montage_JumpToSection(FName("StartFire"));
 	}
 }
