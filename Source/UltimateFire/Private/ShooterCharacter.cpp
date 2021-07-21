@@ -4,8 +4,11 @@
 #include "ShooterCharacter.h"
 
 #include "Camera/CameraComponent.h"
+#include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -65,6 +68,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("FireButton", IE_Pressed, this, &AShooterCharacter::FireWeapon);
 }
 
 void AShooterCharacter::MoveForward(const float Value)
@@ -107,4 +111,29 @@ void AShooterCharacter::LookUpAtRate(const float Rate)
 	// Delta seconds = sec/frame
 	// Deg/sec * sec/frame = deg/frame.
 	AddControllerPitchInput(Rate * BaseLookupRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AShooterCharacter::FireWeapon()
+{
+	// Check if FireSound is assigned. 
+	if(FireSound)
+	{
+		// If assigned play sound.
+		UGameplayStatics::PlaySound2D(this, FireSound);
+	}
+
+	// Get the socket's reference.
+	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
+	if(BarrelSocket)	// Check if valid.
+	{
+		// if valid get it's transform and cache it.
+		const FTransform SocketTransform = BarrelSocket->GetSocketTransform(GetMesh());
+
+		// Check if MuzzleFlash is assigned.
+		if(MuzzleFlash)
+		{
+			// If assigned, spawn it at the given transform.
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
+		}
+	}
 }
