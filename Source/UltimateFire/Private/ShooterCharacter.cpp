@@ -3,6 +3,7 @@
 
 #include "ShooterCharacter.h"
 
+#include "DrawDebugHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -135,12 +136,27 @@ void AShooterCharacter::FireWeapon()
 			// If assigned, spawn it at the given transform.
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
 		}
+
+
+		FHitResult OutFireHit;
+		const FVector Start{SocketTransform.GetLocation()};
+		const FQuat Rotation{SocketTransform.GetRotation()};
+		const FVector RotationAxis{Rotation.GetAxisX()};
+		const FVector End{Start + RotationAxis * 50'000.f};
+
+		GetWorld()->LineTraceSingleByChannel(OutFireHit, Start, End, ECollisionChannel::ECC_Visibility);
+		if(OutFireHit.bBlockingHit)
+		{
+			DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2);
+			DrawDebugPoint(GetWorld(), OutFireHit.Location, 5, FColor::Red, false, 2);
+			
+		}
 	}
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if(AnimInstance && HipFireMontage)
+	if (AnimInstance && HipFireMontage)
 	{
 		AnimInstance->Montage_Play(HipFireMontage);
-		AnimInstance->Montage_JumpToSection(FName("StartFire"));
+		AnimInstance->Montage_JumpToSection(FName("StartFire"));	
 	}
 }
