@@ -22,10 +22,10 @@ AShooterCharacter::AShooterCharacter()
 
 	// Don't rotate when controller rotates
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Move in Input's direction
+	GetCharacterMovement()->bOrientRotationToMovement = false; // Move in Input's direction
 	GetCharacterMovement()->RotationRate = FRotator(0, 540, 0); // Move at this rate
 	GetCharacterMovement()->JumpZVelocity = 600;
 	GetCharacterMovement()->AirControl = 0.2f;
@@ -35,6 +35,7 @@ AShooterCharacter::AShooterCharacter()
 	CameraBoom->SetupAttachment(GetRootComponent()); // Attach the Boom to the root component of the object
 	CameraBoom->TargetArmLength = 300.0f; // Camera will have this fixed distance behind the character
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the camera based on Controller's Input
+	CameraBoom->SocketOffset = FVector(0, 50, 50);
 
 	// Setup Follow Camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Follow Camera"));
@@ -163,7 +164,7 @@ void AShooterCharacter::FireWeapon()
 			UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(
 				GetWorld(), BeamParticles, SocketTransform);
 
-			if(Beam)
+			if (Beam)
 			{
 				Beam->SetVectorParameter(FName("Target"), BeamEndPoint);
 			}
