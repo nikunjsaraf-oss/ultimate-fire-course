@@ -9,7 +9,7 @@
 UCLASS()
 class ULTIMATEFIRE_API AShooterCharacter : public ACharacter
 {
-	GENERATED_BODY()	
+	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
@@ -24,7 +24,7 @@ protected:
 	 * @param Value Input Axis' value passed through PlayerInputComponent
 	 */
 	void MoveForward(float Value);
-	
+
 	/**
 	 * @brief Called for moving sideways
 	 * @param Value Input Axis' value passed through PlayerInputComponent
@@ -56,7 +56,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	
 	/**
 	 * @brief Camera boom is used for positioning behind the character
 	 */
@@ -92,6 +91,12 @@ private:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta = (AllowPrivateAccess = "true"))
 	class UParticleSystem* MuzzleFlash;
+
+	/**
+	 * @brief Montage for firing weapon
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta = (AllowPrivateAccess = "true"))
+	class UAnimMontage* HipFireMontage;
 
 public:
 	/**

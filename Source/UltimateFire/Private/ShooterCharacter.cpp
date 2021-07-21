@@ -23,7 +23,7 @@ AShooterCharacter::AShooterCharacter()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	GetCharacterMovement()->bOrientRotationToMovement = true;	// Move in Input's direction
+	GetCharacterMovement()->bOrientRotationToMovement = true; // Move in Input's direction
 	GetCharacterMovement()->RotationRate = FRotator(0, 540, 0); // Move at this rate
 	GetCharacterMovement()->JumpZVelocity = 600;
 	GetCharacterMovement()->AirControl = 0.2f;
@@ -116,7 +116,7 @@ void AShooterCharacter::LookUpAtRate(const float Rate)
 void AShooterCharacter::FireWeapon()
 {
 	// Check if FireSound is assigned. 
-	if(FireSound)
+	if (FireSound)
 	{
 		// If assigned play sound.
 		UGameplayStatics::PlaySound2D(this, FireSound);
@@ -124,16 +124,23 @@ void AShooterCharacter::FireWeapon()
 
 	// Get the socket's reference.
 	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
-	if(BarrelSocket)	// Check if valid.
+	if (BarrelSocket) // Check if valid.
 	{
 		// if valid get it's transform and cache it.
 		const FTransform SocketTransform = BarrelSocket->GetSocketTransform(GetMesh());
 
 		// Check if MuzzleFlash is assigned.
-		if(MuzzleFlash)
+		if (MuzzleFlash)
 		{
 			// If assigned, spawn it at the given transform.
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
 		}
+	}
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if(AnimInstance && HipFireMontage)
+	{
+		AnimInstance->Montage_Play(HipFireMontage);
+		AnimInstance->Montage_JumpToSection(FName("StartFire"));
 	}
 }
