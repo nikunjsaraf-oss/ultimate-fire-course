@@ -42,10 +42,12 @@ private:
 	/**
 	 * @brief if character is in air it will return true.
 	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
 	bool bIsInAir;
 
 	/**
 	 * @brief If character is moving, it will return true.
 	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess = "true"))
 	bool bIsAccelerating;
 };

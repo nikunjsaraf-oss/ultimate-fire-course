@@ -13,11 +13,11 @@ void UShooterAnimInstance::NativeInitializeAnimation()
 
 void UShooterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 {
-	if (ShooterCharacter == nullptr)
+	if (!ShooterCharacter)
 	{
 		ShooterCharacter = Cast<AShooterCharacter>(TryGetPawnOwner());
 	}
-	if (ShooterCharacter)
+	else
 	{
 		// Get Character's speed from velocity.
 		// Only lateral speed.
