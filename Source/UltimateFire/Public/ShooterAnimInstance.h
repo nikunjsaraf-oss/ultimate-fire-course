@@ -56,4 +56,10 @@ private:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Movement, meta=(AllowPrivateAccess = "true"))
 	float MovementOffsetYaw;
+
+	/**
+		 * @brief  Last frame's offset's yaw when we stop moving.
+		 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Movement, meta=(AllowPrivateAccess = "true"))
+	float LastMovementOffsetYaw;
 };
