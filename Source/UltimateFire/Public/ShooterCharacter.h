@@ -48,7 +48,13 @@ protected:
 	 */
 	void FireWeapon();
 
-	bool GetBeamEndLocation(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation) const;
+	/**
+	 * @brief Check if the ray trace is successful or not.
+	 * @param MuzzleSocketLocation Location from where he beam is supposed to start.
+	 * @param OutBeamLocation Location of the end point of the beam.
+	 * @return bool
+	 */
+	bool CheckBeamEnd(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation) const;
 
 public:
 	// Called every frame

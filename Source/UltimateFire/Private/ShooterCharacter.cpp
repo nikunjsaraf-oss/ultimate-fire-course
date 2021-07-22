@@ -139,7 +139,7 @@ void AShooterCharacter::FireWeapon()
 		}
 
 		FVector BeamEnd;
-		const bool bBeamEnd = GetBeamEndLocation(SocketTransform.GetLocation(), BeamEnd);;
+		const bool bBeamEnd = CheckBeamEnd(SocketTransform.GetLocation(), BeamEnd);;
 		if(bBeamEnd)
 		{
 			if(ImpactParticles)
@@ -162,7 +162,7 @@ void AShooterCharacter::FireWeapon()
 	}
 }
 
-bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation) const
+bool AShooterCharacter::CheckBeamEnd(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation) const
 {
 	FVector2D OutViewPortSize; // Get Current ViewPort size
 	if (GEngine && GEngine->GameViewport)
