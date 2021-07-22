@@ -138,8 +138,8 @@ void AShooterCharacter::FireWeapon()
 			// If assigned, spawn it at the given transform.
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
 		}
-		
-		FVector2D OutViewPortSize;	// Get Current ViewPort size
+
+		FVector2D OutViewPortSize; // Get Current ViewPort size
 		if (GEngine && GEngine->GameViewport)
 		{
 			GEngine->GameViewport->GetViewportSize(OutViewPortSize);
@@ -172,16 +172,27 @@ void AShooterCharacter::FireWeapon()
 
 			// Trace outward from crosshairs world location
 			GetWorld()->LineTraceSingleByChannel(ScreenTraceHit, Start, End, ECC_Visibility);
-			if (ScreenTraceHit.bBlockingHit)	// was there a trace hit?
+			if (ScreenTraceHit.bBlockingHit) // was there a trace hit?
 			{
 				// Beam endpoint is now trace end point
 				BeamEndPoint = ScreenTraceHit.Location;
-				 
-				if (ImpactParticles)
-				{
-					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, BeamEndPoint);
-				}
 			}
+
+			// Perform another line trace from gun barrel
+			FHitResult WeaponTraceHit;
+			const FVector WeaponTraceStart{SocketTransform.GetLocation()};
+			const FVector WeaponTraceEnd{BeamEndPoint};
+			GetWorld()->LineTraceSingleByChannel(WeaponTraceHit, WeaponTraceStart, WeaponTraceEnd, ECC_Visibility);
+			if (WeaponTraceHit.bBlockingHit)
+			{
+				BeamEndPoint = WeaponTraceHit.Location;
+			}
+
+			if (ImpactParticles)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, BeamEndPoint);
+			}
+
 			if (BeamParticles)
 			{
 				UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(
