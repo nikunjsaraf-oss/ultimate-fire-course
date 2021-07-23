@@ -77,6 +77,8 @@ void AShooterCharacter::Tick(float DeltaTime)
 	CalculateAndSetFOV(DeltaTime);
 
 	SetLookRates();
+
+	CalculateCrosshairSpread(DeltaTime);
 }
 
 void AShooterCharacter::CalculateAndSetFOV(float DeltaTime)
@@ -107,7 +109,6 @@ void AShooterCharacter::SetLookRates()
 		BaseLookupRate = HipLookUpRate;
 	}
 }
-
 
 // Called to bind functionality to input
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -312,4 +313,22 @@ void AShooterCharacter::AimingButtonPressed()
 void AShooterCharacter::AimingButtonReleased()
 {
 	bIsAimimg = false;
+}
+
+void AShooterCharacter::CalculateCrosshairSpread(float DeltaTime)
+{
+	const FVector2D WalkSpeedRange{0, 600};
+	const FVector2D VelocityMultiplierRange{0, 1};
+	FVector Velocity = GetVelocity();
+	Velocity.Z = 0;
+
+	CrosshairVelocityFactor = FMath::GetMappedRangeValueClamped(WalkSpeedRange, VelocityMultiplierRange,
+	                                                            Velocity.Size());
+
+	CrosshairSpreadMultiplier = 0.5f + CrosshairVelocityFactor;
+}
+
+float AShooterCharacter::GetCrosshairSpreadMultiplier() const
+{
+	return CrosshairSpreadMultiplier;
 }

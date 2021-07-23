@@ -89,6 +89,12 @@ protected:
 	 */
 	void SetLookRates();
 
+	/**
+	 * @brief Function to calculate how much our crosshair should spread.
+	 * @param DeltaTime World's Delta time in seconds
+	 */
+	void CalculateCrosshairSpread(float DeltaTime);
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -235,6 +241,36 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
 	float ZoomInterpSpeed;
 
+	/**
+	 * @brief Determines the spread of crosshairs.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
+	float CrosshairSpreadMultiplier;
+
+	/**
+	 * @brief Velocity component for crosshair spread.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
+	float CrosshairVelocityFactor;
+
+	/**
+	 * @brief Air component for crosshair spread.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
+	float CrosshairAirFactor;
+
+	/**
+	 * @brief Aim component for crosshair spread.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
+	float CrosshairAimFactor;
+
+	/**
+	 * @brief Shooting component for crosshair spread.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
+	float CrosshairShootingFactor;
+
 public:
 	/**
 	 * @brief Returns the CameraBoom Subobject
@@ -248,5 +284,16 @@ public:
 	 */
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	/**
+	 * @brief Returns where IsAiming is true or not.
+	 * @return IsAiming
+	 */
 	FORCEINLINE bool GetIsAiming() const { return bIsAimimg; }
+
+	/**
+	 * @brief Returns the multiplying factor for CrossHair.
+	 * @return CrosshairSpread Multiplier
+	 */
+	UFUNCTION(BlueprintCallable)
+	float GetCrosshairSpreadMultiplier() const;
 };
