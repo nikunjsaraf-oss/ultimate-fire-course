@@ -15,6 +15,14 @@
 AShooterCharacter::AShooterCharacter()
 	: BaseTurnRate(45.0f),
 	  BaseLookupRate(45.0f),
+	  HipTurnRate(90),
+	  HipLookUpRate(90),
+	  AimTurnRate(20),
+	  AimLookUpRate(20),
+	  MouseHipTurnRate(1),
+	  MouseHipLookUpRate(1),
+	  MouseAimingTurnRate(0.5f),
+	  MouseAimLookUpRate(0.5f),
 	  bIsAimimg(false),
 	  CameraDefaultFOV(0.0f), // Set in BeginPlay()
 	  CameraZoomedFOV(35.0f),
@@ -60,6 +68,17 @@ void AShooterCharacter::BeginPlay()
 	}
 }
 
+
+// Called every frame
+void AShooterCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	CalculateAndSetFOV(DeltaTime);
+
+	SetLookRates();
+}
+
 void AShooterCharacter::CalculateAndSetFOV(float DeltaTime)
 {
 	if (bIsAimimg)
@@ -75,13 +94,20 @@ void AShooterCharacter::CalculateAndSetFOV(float DeltaTime)
 	GetFollowCamera()->SetFieldOfView(CameraCurrentFOV);
 }
 
-// Called every frame
-void AShooterCharacter::Tick(float DeltaTime)
+void AShooterCharacter::SetLookRates()
 {
-	Super::Tick(DeltaTime);
-
-	CalculateAndSetFOV(DeltaTime);
+	if (bIsAimimg)
+	{
+		BaseTurnRate = AimTurnRate;
+		BaseLookupRate = AimLookUpRate;
+	}
+	else
+	{
+		BaseTurnRate = HipTurnRate;
+		BaseLookupRate = HipLookUpRate;
+	}
 }
+
 
 // Called to bind functionality to input
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -93,8 +119,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("Right", this, &AShooterCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AShooterCharacter::LookUpAtRate);
 	PlayerInputComponent->BindAxis("TurnRate", this, &AShooterCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &AShooterCharacter::LookUp);
+	PlayerInputComponent->BindAxis("Turn", this, &AShooterCharacter::Turn);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
@@ -143,6 +169,34 @@ void AShooterCharacter::LookUpAtRate(const float Rate)
 	// Delta seconds = sec/frame
 	// Deg/sec * sec/frame = deg/frame.
 	AddControllerPitchInput(Rate * BaseLookupRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AShooterCharacter::Turn(const float Value)
+{
+	float TurnScaleFactor{};
+	if (bIsAimimg)
+	{
+		TurnScaleFactor = MouseAimingTurnRate;
+	}
+	else
+	{
+		TurnScaleFactor = MouseHipTurnRate;
+	}
+	AddControllerYawInput(Value * TurnScaleFactor);
+}
+
+void AShooterCharacter::LookUp(const float Value)
+{
+	float LookScaleFactor{};
+	if (bIsAimimg)
+	{
+		LookScaleFactor = MouseAimLookUpRate;
+	}
+	else
+	{
+		LookScaleFactor = MouseHipLookUpRate;
+	}
+	AddControllerPitchInput(Value * LookScaleFactor);
 }
 
 void AShooterCharacter::FireWeapon()

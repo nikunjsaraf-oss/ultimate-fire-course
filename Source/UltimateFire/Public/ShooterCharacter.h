@@ -43,6 +43,19 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
+
+	/**
+	* @brief Turn the controller from mouse X input.
+	* @param Value Input value from mouse X movement
+	*/
+	void Turn(float Value);
+
+	/**
+	* @brief LookUp  from mouse Y input.
+	* @param Value Input value from mouse Y movement
+	*/
+	void LookUp(float Value);
+
 	/**
 	 * @brief Call when fire button is pressed
 	 */
@@ -71,6 +84,10 @@ protected:
 	 * @param DeltaTime World Delta Time in s
 	 */
 	void CalculateAndSetFOV(float DeltaTime);
+	/**
+	 * @brief Change sensitivity for aiming.
+	 */
+	void SetLookRates();
 
 public:
 	// Called every frame
@@ -83,26 +100,82 @@ private:
 	/**
 	 * @brief Camera boom is used for positioning behind the character
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
 	/**
 	 * @brief It is attached to the camera boom and follows the character throughout the game.
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
 	/**
 	 * @brief Turn rate in degrees per second. 
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
 	float BaseTurnRate;
 
 	/**
 	 * @brief Look up/down Rate in degrees per second 
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
 	float BaseLookupRate;
+
+	/**
+	 * @brief  Turn rate while not aiming.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	float HipTurnRate;
+
+	/**
+	 * @brief Look up/down rate while not aiming.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	float HipLookUpRate;
+
+	/**
+	 * @brief Turn rate while aiming.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	float AimTurnRate;
+
+	/**
+	 * @brief Look up/down rate while aiming.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	float AimLookUpRate;
+
+	/**
+	 * @brief Scale factor for mouse look sensitivty.
+	 * Turn rate when not aiming.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"),
+		meta = (ClampMin = "0.0", ClamMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float MouseHipTurnRate;
+
+	/**
+	* @brief Scale factor for mouse look sensitivty.
+	* LookUp rate when not aiming.
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"),
+		meta = (ClampMin = "0.0", ClamMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float MouseHipLookUpRate;
+
+	/**
+	* @brief Scale factor for mouse look sensitivty.
+	* Turn rate when aiming.
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"),
+		meta = (ClampMin = "0.0", ClamMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float MouseAimingTurnRate;
+
+	/**
+	* @brief Scale factor for mouse look sensitivty.
+	* LookUp rate when not aiming.
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"),
+		meta = (ClampMin = "0.0", ClamMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float MouseAimLookUpRate;
 
 	/**
 	 * @brief Randomized gun shot sound cue
@@ -174,4 +247,6 @@ public:
 	 * @return UCameraComponent*
 	 */
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	FORCEINLINE bool GetIsAiming() const { return bIsAimimg; }
 };
