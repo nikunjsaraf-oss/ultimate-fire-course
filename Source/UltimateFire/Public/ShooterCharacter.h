@@ -56,15 +56,21 @@ protected:
 	 */
 	bool CheckBeamEnd(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation) const;
 
-	 /**
-	  * @brief Set bIsAimimg to true
-	  */ 
+	/**
+	 * @brief Set bIsAimimg to true
+	 */
 	void AimingButtonPressed();
-	
+
 	/**
 	 * @brief Set bIsAimimg to false
 	 */
 	void AimingButtonReleased();
+
+	/**
+	 * @brief  To calculate and set Current Field Of View
+	 * @param DeltaTime World Delta Time in s
+	 */
+	void CalculateFOV(float DeltaTime);
 
 public:
 	// Called every frame
@@ -137,14 +143,24 @@ private:
 	/**
 	 * @brief Default FOV for our follow camera
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
 	float CameraDefaultFOV;
 
 	/**
 	 * @brief Zoomed FOV for Follow Camera
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
 	float CameraZoomedFOV;
+
+	/**
+	 * @brief Camera's Current FOV for interpolation
+	 */
+	float CameraCurrentFOV;
+
+	/**
+	 * @brief  Speed for interpolation of FOV
+	 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
+	float ZoomInterpSpeed;
 
 public:
 	/**

@@ -16,8 +16,10 @@ AShooterCharacter::AShooterCharacter()
 	: BaseTurnRate(45.0f),
 	  BaseLookupRate(45.0f),
 	  bIsAimimg(false),
-	  CameraDefaultFOV(0.0f),	// Set in BeginPlay()
-	  CameraZoomedFOV(60.0f)
+	  CameraDefaultFOV(0.0f), // Set in BeginPlay()
+	  CameraZoomedFOV(35.0f),
+	  CameraCurrentFOV(0),
+	  ZoomInterpSpeed(20.0f)
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -35,9 +37,9 @@ AShooterCharacter::AShooterCharacter()
 	// Setup Camera Boom
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
 	CameraBoom->SetupAttachment(GetRootComponent()); // Attach the Boom to the root component of the object
-	CameraBoom->TargetArmLength = 300.0f; // Camera will have this fixed distance behind the character
+	CameraBoom->TargetArmLength = 180.0f; // Camera will have this fixed distance behind the character
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the camera based on Controller's Input
-	CameraBoom->SocketOffset = FVector(0, 50, 50);
+	CameraBoom->SocketOffset = FVector(0, 50, 70);
 
 	// Setup Follow Camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Follow Camera"));
@@ -54,6 +56,19 @@ void AShooterCharacter::BeginPlay()
 	if (FollowCamera)
 	{
 		CameraDefaultFOV = FollowCamera->FieldOfView;
+		CameraCurrentFOV = CameraDefaultFOV;
+	}
+}
+
+void AShooterCharacter::CalculateFOV(float DeltaTime)
+{
+	if (bIsAimimg)
+	{
+		CameraCurrentFOV = FMath::FInterpTo(CameraCurrentFOV, CameraZoomedFOV, DeltaTime, ZoomInterpSpeed);
+	}
+	else
+	{
+		CameraCurrentFOV = FMath::FInterpTo(CameraCurrentFOV, CameraDefaultFOV, DeltaTime, ZoomInterpSpeed);
 	}
 }
 
@@ -61,6 +76,11 @@ void AShooterCharacter::BeginPlay()
 void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	CalculateFOV(DeltaTime);
+
+	// Set FOV
+	GetFollowCamera()->SetFieldOfView(CameraCurrentFOV);
 }
 
 // Called to bind functionality to input
@@ -233,11 +253,9 @@ bool AShooterCharacter::CheckBeamEnd(const FVector& MuzzleSocketLocation, FVecto
 void AShooterCharacter::AimingButtonPressed()
 {
 	bIsAimimg = true;
-	GetFollowCamera()->SetFieldOfView(CameraZoomedFOV);
 }
 
 void AShooterCharacter::AimingButtonReleased()
 {
 	bIsAimimg = false;
-	GetFollowCamera()->SetFieldOfView(CameraDefaultFOV);
 }
