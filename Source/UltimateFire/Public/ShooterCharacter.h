@@ -56,6 +56,16 @@ protected:
 	 */
 	bool CheckBeamEnd(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation) const;
 
+	 /**
+	  * @brief Set bIsAimimg to true
+	  */ 
+	void AimingButtonPressed();
+	
+	/**
+	 * @brief Set bIsAimimg to false
+	 */
+	void AimingButtonReleased();
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -117,6 +127,24 @@ private:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* BeamParticles;
+
+	/**
+	 * @brief To check if aim is on or not.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
+	bool bIsAimimg;
+
+	/**
+	 * @brief Default FOV for our follow camera
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
+	float CameraDefaultFOV;
+
+	/**
+	 * @brief Zoomed FOV for Follow Camera
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
+	float CameraZoomedFOV;
 
 public:
 	/**

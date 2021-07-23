@@ -14,7 +14,10 @@
 // Sets default values
 AShooterCharacter::AShooterCharacter()
 	: BaseTurnRate(45.0f),
-	  BaseLookupRate(45.0f)
+	  BaseLookupRate(45.0f),
+	  bIsAimimg(false),
+	  CameraDefaultFOV(0.0f),	// Set in BeginPlay()
+	  CameraZoomedFOV(60.0f)
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -47,6 +50,11 @@ AShooterCharacter::AShooterCharacter()
 void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (FollowCamera)
+	{
+		CameraDefaultFOV = FollowCamera->FieldOfView;
+	}
 }
 
 // Called every frame
@@ -71,6 +79,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("FireButton", IE_Pressed, this, &AShooterCharacter::FireWeapon);
+	PlayerInputComponent->BindAction("AimingButton", IE_Pressed, this, &AShooterCharacter::AimingButtonPressed);
+	PlayerInputComponent->BindAction("AimingButton", IE_Released, this, &AShooterCharacter::AimingButtonReleased);
 }
 
 void AShooterCharacter::MoveForward(const float Value)
@@ -140,14 +150,15 @@ void AShooterCharacter::FireWeapon()
 
 		FVector BeamEnd;
 		const bool bBeamEnd = CheckBeamEnd(SocketTransform.GetLocation(), BeamEnd);;
-		if(bBeamEnd)
+		if (bBeamEnd)
 		{
-			if(ImpactParticles)
+			if (ImpactParticles)
 			{
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, BeamEnd);
 			}
-			UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BeamParticles, SocketTransform);
-			if(Beam)
+			UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(
+				GetWorld(), BeamParticles, SocketTransform);
+			if (Beam)
 			{
 				Beam->SetVectorParameter(FName("Target"), BeamEnd);
 			}
@@ -217,4 +228,16 @@ bool AShooterCharacter::CheckBeamEnd(const FVector& MuzzleSocketLocation, FVecto
 	}
 
 	return false;
+}
+
+void AShooterCharacter::AimingButtonPressed()
+{
+	bIsAimimg = true;
+	GetFollowCamera()->SetFieldOfView(CameraZoomedFOV);
+}
+
+void AShooterCharacter::AimingButtonReleased()
+{
+	bIsAimimg = false;
+	GetFollowCamera()->SetFieldOfView(CameraDefaultFOV);
 }
