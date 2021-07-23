@@ -70,7 +70,7 @@ protected:
 	 * @brief  To calculate and set Current Field Of View
 	 * @param DeltaTime World Delta Time in s
 	 */
-	void CalculateFOV(float DeltaTime);
+	void CalculateAndSetFOV(float DeltaTime);
 
 public:
 	// Called every frame

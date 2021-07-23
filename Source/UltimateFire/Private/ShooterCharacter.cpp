@@ -60,7 +60,7 @@ void AShooterCharacter::BeginPlay()
 	}
 }
 
-void AShooterCharacter::CalculateFOV(float DeltaTime)
+void AShooterCharacter::CalculateAndSetFOV(float DeltaTime)
 {
 	if (bIsAimimg)
 	{
@@ -70,6 +70,9 @@ void AShooterCharacter::CalculateFOV(float DeltaTime)
 	{
 		CameraCurrentFOV = FMath::FInterpTo(CameraCurrentFOV, CameraDefaultFOV, DeltaTime, ZoomInterpSpeed);
 	}
+
+	// Set FOV
+	GetFollowCamera()->SetFieldOfView(CameraCurrentFOV);
 }
 
 // Called every frame
@@ -77,10 +80,7 @@ void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CalculateFOV(DeltaTime);
-
-	// Set FOV
-	GetFollowCamera()->SetFieldOfView(CameraCurrentFOV);
+	CalculateAndSetFOV(DeltaTime);
 }
 
 // Called to bind functionality to input
