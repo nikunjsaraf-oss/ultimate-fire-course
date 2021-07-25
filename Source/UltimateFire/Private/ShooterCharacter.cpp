@@ -24,7 +24,7 @@ AShooterCharacter::AShooterCharacter()
 	  MouseAimingTurnRate(0.5f),
 	  MouseAimLookUpRate(0.5f),
 	  bIsAimimg(false),
-	  CameraDefaultFOV(0.0f), // Set in BeginPlay()
+	  CameraDefaultFOV(0.0f),
 	  CameraZoomedFOV(35.0f),
 	  CameraCurrentFOV(0),
 	  ZoomInterpSpeed(20.0f),
@@ -34,7 +34,10 @@ AShooterCharacter::AShooterCharacter()
 	  CrosshairAimFactor(0),
 	  CrosshairShootingFactor(0),
 	  ShootTimeDuration(0.05f),
-	  bIsFiringBullet(false)
+	  bIsFiringBullet(false),
+	  bIsFireButtonPressed(false),
+	  bShouldFire(true),
+	  AutomaticFireRate(0.1f)
 
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -133,7 +136,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAction("FireButton", IE_Pressed, this, &AShooterCharacter::FireWeapon);
+	PlayerInputComponent->BindAction("FireButton", IE_Pressed, this, &AShooterCharacter::FireButtonPressed);
+	PlayerInputComponent->BindAction("FireButton", IE_Released, this, &AShooterCharacter::FireButtonReleased);
 	PlayerInputComponent->BindAction("AimingButton", IE_Pressed, this, &AShooterCharacter::AimingButtonPressed);
 	PlayerInputComponent->BindAction("AimingButton", IE_Released, this, &AShooterCharacter::AimingButtonReleased);
 }
@@ -381,6 +385,37 @@ void AShooterCharacter::StartCrosshairBulletFire()
 void AShooterCharacter::FinishCrossHairBulletFire()
 {
 	bIsFiringBullet = false;
+}
+
+void AShooterCharacter::FireButtonPressed()
+{
+	bIsFireButtonPressed = true;
+	StartFireTimer();
+}
+
+void AShooterCharacter::FireButtonReleased()
+{
+	bIsFireButtonPressed = false;
+}
+
+void AShooterCharacter::StartFireTimer()
+{
+	if (bShouldFire)
+	{
+		FireWeapon();
+		bShouldFire = false;
+		GetWorldTimerManager().SetTimer(TimerHandle_AutoFire, this, &AShooterCharacter::AutoFireReset,
+		                                AutomaticFireRate);
+	}
+}
+
+void AShooterCharacter::AutoFireReset()
+{
+	bShouldFire = true;
+	if (bIsFireButtonPressed)
+	{
+		StartFireTimer();
+	}
 }
 
 float AShooterCharacter::GetCrosshairSpreadMultiplier() const

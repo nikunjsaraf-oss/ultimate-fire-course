@@ -95,10 +95,26 @@ protected:
 	 */
 	void CalculateCrosshairSpread(float DeltaTime);
 
+	/**
+	 * @brief When firing, call this to start shrinking crosshair
+	 */
 	void StartCrosshairBulletFire();
 	
+	/**
+	 * @brief After finished firing, call this to rest crosshair position.
+	 * I marked this UFunction because this is called from SetTimer(). 
+	 */
 	UFUNCTION()
 	void FinishCrossHairBulletFire();
+
+	void FireButtonPressed();
+
+	void FireButtonReleased();
+
+	void StartFireTimer();
+
+	UFUNCTION()
+	void AutoFireReset();
 
 public:
 	// Called every frame
@@ -290,6 +306,26 @@ private:
 	 * @brief Timerhandle to reset crosshair position after firing
 	 */
 	FTimerHandle TimerHandle_CrosshairShoot;
+
+	/**
+	 * @brief whether or not fire button is pressed or not.
+	 */
+	bool bIsFireButtonPressed;
+
+	/**
+	 * @brief if false, cannot fire bullet.
+	 */
+	bool bShouldFire;
+
+	/**
+	 * @brief Rate of Gunfir
+	 */
+	float AutomaticFireRate;
+
+	/**
+	 * @brief Sets a timer for gunshots.
+	 */
+	FTimerHandle TimerHandle_AutoFire;
 
 public:
 	/**
