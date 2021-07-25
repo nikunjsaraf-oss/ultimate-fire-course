@@ -37,7 +37,7 @@ private:
 	class UBoxComponent* CollisionBox;
 
 	/**
-	 * @brief Popup widget when player looks at the Item.
+	 * @brief Widget blueprint for pickup guns
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
 	class UWidgetComponent* PickupWidget;
