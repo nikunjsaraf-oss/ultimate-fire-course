@@ -24,7 +24,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-
 	/**
 	* @brief Skeletal mesh for the item
 	*/
@@ -36,5 +35,11 @@ private:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
 	class UBoxComponent* CollisionBox;
+
+	/**
+	 * @brief Popup widget when player looks at the Item.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
+	class UWidgetComponent* PickupWidget;
 public:
 };
