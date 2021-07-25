@@ -3,7 +3,9 @@
 
 #include "ShooterCharacter.h"
 
+#include "Item.h"
 #include "Camera/CameraComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -90,6 +92,18 @@ void AShooterCharacter::Tick(float DeltaTime)
 	SetLookRates();
 
 	CalculateCrosshairSpread(DeltaTime);
+
+	FHitResult ItemTraceResult;
+	TraceUnderCrossHairs(ItemTraceResult);
+	if(ItemTraceResult.bBlockingHit)
+	{
+		AItem* HitItem = Cast<AItem>(ItemTraceResult.Actor);
+		if(HitItem && HitItem->GetPickupWidget())
+		{
+			// Show Items pickup widget.
+			HitItem->GetPickupWidget()->SetVisibility(true);
+		}
+	}
 }
 
 void AShooterCharacter::CalculateAndSetFOV(float DeltaTime)
@@ -271,7 +285,7 @@ bool AShooterCharacter::CheckBeamEnd(const FVector& MuzzleSocketLocation, FVecto
 	}
 
 	// Get and calculate crosshair location
-	FVector2D CrossHairLocation(OutViewPortSize.X / 2.f, OutViewPortSize.Y / 2.f);
+	const FVector2D CrossHairLocation(OutViewPortSize.X / 2, OutViewPortSize.Y / 2);
 
 	FVector OutCrossHairWorldPosition;
 	FVector OutCrossHairWorldDirection;
@@ -416,6 +430,48 @@ void AShooterCharacter::AutoFireReset()
 	{
 		StartFireTimer();
 	}
+}
+
+bool AShooterCharacter::TraceUnderCrossHairs(FHitResult& OutHitResult) const
+{
+	// Get viewport size.
+
+	FVector2D OutViewPortSize; // Get Current ViewPort size
+	if (GEngine && GEngine->GameViewport)
+	{
+		GEngine->GameViewport->GetViewportSize(OutViewPortSize);
+	}
+
+	// Get and calculate crosshair location
+	const FVector2D CrossHairLocation(OutViewPortSize.X / 2, OutViewPortSize.Y / 2);
+
+	FVector OutCrossHairWorldPosition;
+	FVector OutCrossHairWorldDirection;
+
+	// Get CrossHair position and location
+	const bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
+		UGameplayStatics::GetPlayerController(this, 0),
+		CrossHairLocation,
+		OutCrossHairWorldPosition,
+		OutCrossHairWorldDirection
+	);
+
+	if (bScreenToWorld)
+	{
+		// Trace from crosshair world location
+
+		const FVector Start{OutCrossHairWorldPosition};
+		const FVector End{Start + OutCrossHairWorldDirection * 50'000};
+
+		GetWorld()->LineTraceSingleByChannel(OutHitResult, Start, End, ECC_Visibility);
+
+		if (OutHitResult.bBlockingHit)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 float AShooterCharacter::GetCrosshairSpreadMultiplier() const

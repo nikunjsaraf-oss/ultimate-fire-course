@@ -99,7 +99,7 @@ protected:
 	 * @brief When firing, call this to start shrinking crosshair
 	 */
 	void StartCrosshairBulletFire();
-	
+
 	/**
 	 * @brief After finished firing, call this to rest crosshair position.
 	 * I marked this UFunction because this is called from SetTimer(). 
@@ -107,14 +107,33 @@ protected:
 	UFUNCTION()
 	void FinishCrossHairBulletFire();
 
+	/**
+	 * @brief Sets bIsFireButtonPressed to true and calls start StartFireTimer.
+	 */
 	void FireButtonPressed();
 
+	/**
+	 * @brief Sets bIsFireButtonPressed to false.
+	 */
 	void FireButtonReleased();
 
+	/**
+	 * @brief Sets TimerHandle_AutoFire for automatic firing
+	 */
 	void StartFireTimer();
 
+	/**
+	 * @brief Resets the firing condition.
+	 */
 	UFUNCTION()
 	void AutoFireReset();
+
+	/**
+	 * @brief Line trace for items under crosshairs
+	 * @param OutHitResult Stores the hit result information. 
+	 * @return If line trace is successful, it will return true.
+	 */
+	bool TraceUnderCrossHairs(FHitResult& OutHitResult) const;
 
 public:
 	// Called every frame
