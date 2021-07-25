@@ -276,10 +276,19 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta = (AllowPrivateAccess = "true"))
 	float CrosshairShootingFactor;
 
+	/**
+	 * @brief Rate at which we have to set timer for crosshair-shooting factor
+	 */
 	float ShootTimeDuration;
 
+	/**
+	 * @brief bool to store whether is firing or not
+	 */
 	bool bIsFiringBullet;
 
+	/**
+	 * @brief Timerhandle to reset crosshair position after firing
+	 */
 	FTimerHandle TimerHandle_CrosshairShoot;
 
 public:
