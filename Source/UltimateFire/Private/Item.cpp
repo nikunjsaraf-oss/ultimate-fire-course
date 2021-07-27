@@ -10,7 +10,8 @@
 
 // Sets default values
 AItem::AItem()
-	: ItemName(FString("Default"))
+	: ItemName(FString("Default")),
+	  ItemCount(30)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -47,10 +48,10 @@ void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                             const FHitResult& SweepResult)
 {
-	if(OtherActor)
+	if (OtherActor)
 	{
 		AShooterCharacter* ShooterCharacter = Cast<AShooterCharacter>(OtherActor);
-		if(ShooterCharacter)
+		if (ShooterCharacter)
 		{
 			ShooterCharacter->IncrementOverlappedItemCount(1);
 		}
@@ -60,10 +61,10 @@ void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if(OtherActor)
+	if (OtherActor)
 	{
 		AShooterCharacter* ShooterCharacter = Cast<AShooterCharacter>(OtherActor);
-		if(ShooterCharacter)
+		if (ShooterCharacter)
 		{
 			ShooterCharacter->IncrementOverlappedItemCount(-1);
 		}
