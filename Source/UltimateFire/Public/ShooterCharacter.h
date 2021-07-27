@@ -138,6 +138,8 @@ protected:
 
 	void TraceForItems();
 
+	void SpawnDefaultWeapon();
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -364,6 +366,18 @@ private:
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess = "true"))
 	class AItem* TraceHitItem;
+
+	/**
+	 * @brief Currently equipped weapon
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess = "true"))
+	class AWeapon* EquippedWeapon;
+
+	/**
+	 * @brief Set default weapon class in blueprints
+	 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess = "true"))
+	TSubclassOf<AWeapon> DefaultWeaponClass;
 
 public:
 	/**

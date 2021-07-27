@@ -4,6 +4,7 @@
 #include "ShooterCharacter.h"
 
 #include "Item.h"
+#include "Weapon.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
@@ -80,6 +81,8 @@ void AShooterCharacter::BeginPlay()
 		CameraDefaultFOV = FollowCamera->FieldOfView;
 		CameraCurrentFOV = CameraDefaultFOV;
 	}
+
+	SpawnDefaultWeapon();
 }
 
 
@@ -478,6 +481,21 @@ void AShooterCharacter::TraceForItems()
 	{
 		// No longer overlapping any item
 		TraceHitItem->GetPickupWidget()->SetVisibility(false);
+	}
+}
+
+void AShooterCharacter::SpawnDefaultWeapon()
+{
+	if(DefaultWeaponClass)
+	{
+		AWeapon* DefaultWeapon = GetWorld()->SpawnActor<AWeapon>(DefaultWeaponClass);
+		const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
+		if(DefaultWeapon && HandSocket)
+		{
+			HandSocket->AttachActor(DefaultWeapon, GetMesh());
+		}
+
+		EquippedWeapon = DefaultWeapon;
 	}
 }
 
