@@ -6,6 +6,18 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
+UENUM(BlueprintType)
+enum class EItemRarity : uint8
+{
+	EIR_Damaged UMETA(DisplayName = "Damaged"),
+	EIR_Common UMETA(DisplayName = "Common"),
+	EIR_UnCommon UMETA(DisplayName = "UnCommon"),
+	EIR_Rare UMETA(DisplayName = "Rare"),
+	EIR_Legendary UMETA(DisplayName = "Legendary"),
+
+	EIR_MAX UMETA(DisplayName = "Default")
+};
+
 UCLASS()
 class ULTIMATEFIRE_API AItem : public AActor
 {
@@ -32,6 +44,12 @@ protected:
 	UFUNCTION()
 	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent*
 	                        OtherComp, int32 OtherBodyIndex);
+
+	
+	/**
+	 * @brief Set active stars boolean based on rarity
+	 */
+	void SetActiveStars();
 
 public:
 	// Called every frame
@@ -73,6 +91,18 @@ private:
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
 	int32 ItemCount;
+
+	/**
+	 * @brief Item Rarity - determines the number of stars in WBP
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
+	EItemRarity ItemRarity;
+
+	/**
+	 * @brief To hold the number of stars
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
+	TArray<bool> ActiveStars;
 
 public:
 	FORCEINLINE UWidgetComponent* GetPickupWidget() const { return PickupWidget; }
