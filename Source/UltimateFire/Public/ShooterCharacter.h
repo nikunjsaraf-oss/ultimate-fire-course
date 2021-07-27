@@ -67,7 +67,7 @@ protected:
 	 * @param OutBeamLocation Location of the end point of the beam.
 	 * @return bool
 	 */
-	bool CheckBeamEnd(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation) const;
+	bool GetBeamEnd(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation) const;
 
 	/**
 	 * @brief Set bIsAimimg to true
@@ -130,10 +130,11 @@ protected:
 
 	/**
 	 * @brief Line trace for items under crosshairs
-	 * @param OutHitResult Stores the hit result information. 
+	 * @param OutHitResult Stores the hit result information.
+	 * @param OutHitLocation Stores the location of hit result.
 	 * @return If line trace is successful, it will return true.
 	 */
-	bool TraceUnderCrossHairs(FHitResult& OutHitResult) const;
+	bool TraceUnderCrossHairs(FHitResult& OutHitResult, FVector& OutHitLocation) const;
 
 public:
 	// Called every frame
