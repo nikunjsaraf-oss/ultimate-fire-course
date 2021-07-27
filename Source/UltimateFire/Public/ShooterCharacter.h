@@ -136,6 +136,8 @@ protected:
 	 */
 	bool TraceUnderCrossHairs(FHitResult& OutHitResult, FVector& OutHitLocation) const;
 
+	void TraceForItems() const;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -347,6 +349,16 @@ private:
 	 */
 	FTimerHandle TimerHandle_AutoFire;
 
+	/**
+	 * @brief true if we should trace every frame for items.
+	 */
+	bool bShoulTraceForItem;
+
+	/**
+	 * @brief Number of overlapped AItems 
+	 */
+	int8 OverlappedItemCount;
+
 public:
 	/**
 	 * @brief Returns the CameraBoom Subobject
@@ -372,4 +384,11 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	float GetCrosshairSpreadMultiplier() const;
+
+	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
+
+	/**
+	 * @brief Adds/Subtracts to/from OverlappedItemCount and updates bShoulTraceForItem. 
+	 */
+	void IncrementOverlappedItemCount(int8 Amount);
 };

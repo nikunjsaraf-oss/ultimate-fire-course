@@ -19,6 +19,20 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	/**
+	 * @brief Function to call when there is a overlap
+	 */
+	UFUNCTION()
+	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent*
+	                     OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	/**
+	* @brief Function to call when there overlap finishes
+	*/
+	UFUNCTION()
+	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent*
+	                        OtherComp, int32 OtherBodyIndex);
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -41,6 +55,12 @@ private:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
 	class UWidgetComponent* PickupWidget;
+
+	/**
+	 * @brief Enable item tracing when overlapped.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
+	class USphereComponent* AreaSphere;
 
 public:
 	FORCEINLINE UWidgetComponent* GetPickupWidget() const { return PickupWidget; }

@@ -39,7 +39,8 @@ AShooterCharacter::AShooterCharacter()
 	  bIsFiringBullet(false),
 	  bIsFireButtonPressed(false),
 	  bShouldFire(true),
-	  AutomaticFireRate(0.1f)
+	  AutomaticFireRate(0.1f),
+	  bShoulTraceForItem(false)
 
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -93,18 +94,8 @@ void AShooterCharacter::Tick(float DeltaTime)
 
 	CalculateCrosshairSpread(DeltaTime);
 
-	FHitResult ItemTraceResult;
-	FVector HitLocation;
-	TraceUnderCrossHairs(ItemTraceResult, HitLocation);
-	if (ItemTraceResult.bBlockingHit)
-	{
-		AItem* HitItem = Cast<AItem>(ItemTraceResult.Actor);
-		if (HitItem && HitItem->GetPickupWidget())
-		{
-			// Show Items pickup widget.
-			HitItem->GetPickupWidget()->SetVisibility(true);
-		}
-	}
+	TraceForItems();
+	
 }
 
 void AShooterCharacter::CalculateAndSetFOV(float DeltaTime)
@@ -452,7 +443,40 @@ bool AShooterCharacter::TraceUnderCrossHairs(FHitResult& OutHitResult, FVector& 
 	return false;
 }
 
+void AShooterCharacter::TraceForItems() const
+{
+	if(bShoulTraceForItem)
+	{
+		FHitResult ItemTraceResult;
+		FVector HitLocation;
+		TraceUnderCrossHairs(ItemTraceResult, HitLocation);
+		if (ItemTraceResult.bBlockingHit)
+		{
+			AItem* HitItem = Cast<AItem>(ItemTraceResult.Actor);
+			if (HitItem && HitItem->GetPickupWidget())
+			{
+				// Show Items pickup widget.
+				HitItem->GetPickupWidget()->SetVisibility(true);
+			}
+		}
+	}
+}
+
 float AShooterCharacter::GetCrosshairSpreadMultiplier() const
 {
 	return CrosshairSpreadMultiplier;
+}
+
+void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)
+{
+	if(OverlappedItemCount + Amount <= 0)
+	{
+		OverlappedItemCount = 0;
+		bShoulTraceForItem = false;
+	}
+	else
+	{
+		OverlappedItemCount += Amount;
+		bShoulTraceForItem = true;
+	}
 }
