@@ -443,7 +443,7 @@ bool AShooterCharacter::TraceUnderCrossHairs(FHitResult& OutHitResult, FVector& 
 	return false;
 }
 
-void AShooterCharacter::TraceForItems() const
+void AShooterCharacter::TraceForItems()
 {
 	if(bShoulTraceForItem)
 	{
@@ -458,7 +458,26 @@ void AShooterCharacter::TraceForItems() const
 				// Show Items pickup widget.
 				HitItem->GetPickupWidget()->SetVisibility(true);
 			}
+
+			// We hit an Item last frame
+			if(TraceHitItem)
+			{
+				if(HitItem != TraceHitItem)
+				{
+					// We are hitting Item this fram from last frame || Item is null
+					TraceHitItem->GetPickupWidget()->SetVisibility(false);
+				}
+			}
+			
+			// Store a reference
+			TraceHitItem = HitItem;	
 		}
+	}
+
+	else if(TraceHitItem)
+	{
+		// No longer overlapping any item
+		TraceHitItem->GetPickupWidget()->SetVisibility(false);
 	}
 }
 
@@ -467,7 +486,7 @@ float AShooterCharacter::GetCrosshairSpreadMultiplier() const
 	return CrosshairSpreadMultiplier;
 }
 
-void AShooterCharacter::IncrementOverlappedItemCount(int8 Amount)
+void AShooterCharacter::IncrementOverlappedItemCount(const int8 Amount)
 {
 	if(OverlappedItemCount + Amount <= 0)
 	{

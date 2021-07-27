@@ -136,7 +136,7 @@ protected:
 	 */
 	bool TraceUnderCrossHairs(FHitResult& OutHitResult, FVector& OutHitLocation) const;
 
-	void TraceForItems() const;
+	void TraceForItems();
 
 public:
 	// Called every frame
@@ -358,6 +358,12 @@ private:
 	 * @brief Number of overlapped AItems 
 	 */
 	int8 OverlappedItemCount;
+
+	/**
+	 * @brief The AItem we hit last frame.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess = "true"))
+	class AItem* TraceHitItem;
 
 public:
 	/**
