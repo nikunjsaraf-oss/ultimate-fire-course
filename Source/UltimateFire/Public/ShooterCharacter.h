@@ -153,6 +153,14 @@ protected:
 	 */
 	void EquipWeapon(AWeapon* WeaponToEquip);
 
+	/**
+	* @brief Detach weapon and let it fall to the ground.
+	*/
+	void DropWeapon();
+
+	void InteractButtonPressed();
+	void InteractButtonReleased();
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

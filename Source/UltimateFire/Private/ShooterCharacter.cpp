@@ -147,10 +147,15 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	
 	PlayerInputComponent->BindAction("FireButton", IE_Pressed, this, &AShooterCharacter::FireButtonPressed);
 	PlayerInputComponent->BindAction("FireButton", IE_Released, this, &AShooterCharacter::FireButtonReleased);
+	
 	PlayerInputComponent->BindAction("AimingButton", IE_Pressed, this, &AShooterCharacter::AimingButtonPressed);
 	PlayerInputComponent->BindAction("AimingButton", IE_Released, this, &AShooterCharacter::AimingButtonReleased);
+	
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AShooterCharacter::InteractButtonPressed);
+	PlayerInputComponent->BindAction("Interact", IE_Released, this, &AShooterCharacter::InteractButtonReleased);
 }
 
 void AShooterCharacter::MoveForward(const float Value)
@@ -221,6 +226,27 @@ void AShooterCharacter::LookUp(const float Value)
 		LookScaleFactor = MouseHipLookUpRate;
 	}
 	AddControllerPitchInput(Value * LookScaleFactor);
+}
+
+void AShooterCharacter::InteractButtonPressed()
+{
+	DropWeapon();
+}
+
+void AShooterCharacter::InteractButtonReleased()
+{
+}
+
+
+void AShooterCharacter::FireButtonPressed()
+{
+	bIsFireButtonPressed = true;
+	StartFireTimer();
+}
+
+void AShooterCharacter::FireButtonReleased()
+{
+	bIsFireButtonPressed = false;
 }
 
 void AShooterCharacter::FireWeapon()
@@ -372,16 +398,6 @@ void AShooterCharacter::FinishCrossHairBulletFire()
 	bIsFiringBullet = false;
 }
 
-void AShooterCharacter::FireButtonPressed()
-{
-	bIsFireButtonPressed = true;
-	StartFireTimer();
-}
-
-void AShooterCharacter::FireButtonReleased()
-{
-	bIsFireButtonPressed = false;
-}
 
 void AShooterCharacter::StartFireTimer()
 {
@@ -500,7 +516,6 @@ void AShooterCharacter::EquipWeapon(AWeapon* WeaponToEquip)
 {
 	if (WeaponToEquip)
 	{
-
 		const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
 		if (HandSocket)
 		{
@@ -509,6 +524,15 @@ void AShooterCharacter::EquipWeapon(AWeapon* WeaponToEquip)
 
 		EquippedWeapon = WeaponToEquip;
 		EquippedWeapon->SetItemState(EItemState::EIS_Equipped);
+	}
+}
+
+void AShooterCharacter::DropWeapon()
+{
+	if (EquippedWeapon)
+	{
+		const FDetachmentTransformRules DetachmentTransformRules(EDetachmentRule::KeepWorld, true);
+		EquippedWeapon->GetItemMesh()->DetachFromComponent(DetachmentTransformRules);
 	}
 }
 
