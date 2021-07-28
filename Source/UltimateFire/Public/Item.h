@@ -65,6 +65,12 @@ protected:
 	 */
 	void SetActiveStars();
 
+	/**
+	 * @brief Function to set the item state
+	 * @param State State of item to set
+	 */
+	void SetItemProperties(EItemState State) const;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -129,5 +135,6 @@ public:
 	FORCEINLINE UBoxComponent* GetCollisionBox() const { return CollisionBox; }
 	FORCEINLINE USphereComponent* GetAreaSphere() const { return AreaSphere; }
 	FORCEINLINE EItemState GetItemState() const { return ItemState; }
-	FORCEINLINE void SetItemState(const EItemState State) { ItemState = State; }
+	
+	void SetItemState(const EItemState State);
 };
