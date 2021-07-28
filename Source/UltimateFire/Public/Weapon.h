@@ -2,7 +2,7 @@
 
 #pragma once
 
-	#include "CoreMinimal.h"
+#include "CoreMinimal.h"
 #include "Item.h"
 #include "Weapon.generated.h"
 
@@ -13,5 +13,19 @@ UCLASS()
 class ULTIMATEFIRE_API AWeapon : public AItem
 {
 	GENERATED_BODY()
-	
+
+public:
+	AWeapon();
+	virtual void Tick(float DeltaSeconds) override;
+protected:
+	void StopFalling();
+private:
+	FTimerHandle TimerHandle_ThrowWeapon;
+	float ThrowWeaponTime;
+	bool bIsFalling;
+public:
+	/**
+	 * @brief Add impulse while dropping weapon
+	 */
+	void ThrowWeapon();
 };
