@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "ShooterCharacter.generated.h"
 
+class AWeapon;
+
 UCLASS()
 class ULTIMATEFIRE_API AShooterCharacter : public ACharacter
 {
@@ -136,9 +138,20 @@ protected:
 	 */
 	bool TraceUnderCrossHairs(FHitResult& OutHitResult, FVector& OutHitLocation) const;
 
+	/**
+	 * @brief Trace for items is overlappedItemCount > 0
+	 */
 	void TraceForItems();
 
-	void SpawnDefaultWeapon();
+	/**
+	 * @brief Spawns a default a weapon and equips it.
+	 */
+	AWeapon* SpawnDefaultWeapon() const;
+
+	/**
+	 * @brief Takes a weapon and attaches it to the mesh.
+	 */
+	void EquipWeapon(AWeapon* WeaponToEquip);
 
 public:
 	// Called every frame
@@ -371,7 +384,7 @@ private:
 	 * @brief Currently equipped weapon
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess = "true"))
-	class AWeapon* EquippedWeapon;
+	AWeapon* EquippedWeapon;
 
 	/**
 	 * @brief Set default weapon class in blueprints

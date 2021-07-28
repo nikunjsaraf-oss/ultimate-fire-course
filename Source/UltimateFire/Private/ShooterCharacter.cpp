@@ -6,6 +6,8 @@
 #include "Item.h"
 #include "Weapon.h"
 #include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -82,7 +84,8 @@ void AShooterCharacter::BeginPlay()
 		CameraCurrentFOV = CameraDefaultFOV;
 	}
 
-	SpawnDefaultWeapon();
+	// Spawn default weapon and equip it
+	EquipWeapon(SpawnDefaultWeapon());
 }
 
 
@@ -98,7 +101,6 @@ void AShooterCharacter::Tick(float DeltaTime)
 	CalculateCrosshairSpread(DeltaTime);
 
 	TraceForItems();
-	
 }
 
 void AShooterCharacter::CalculateAndSetFOV(float DeltaTime)
@@ -448,7 +450,7 @@ bool AShooterCharacter::TraceUnderCrossHairs(FHitResult& OutHitResult, FVector& 
 
 void AShooterCharacter::TraceForItems()
 {
-	if(bShoulTraceForItem)
+	if (bShoulTraceForItem)
 	{
 		FHitResult ItemTraceResult;
 		FVector HitLocation;
@@ -463,39 +465,51 @@ void AShooterCharacter::TraceForItems()
 			}
 
 			// We hit an Item last frame
-			if(TraceHitItem)
+			if (TraceHitItem)
 			{
-				if(HitItem != TraceHitItem)
+				if (HitItem != TraceHitItem)
 				{
 					// We are hitting Item this fram from last frame || Item is null
 					TraceHitItem->GetPickupWidget()->SetVisibility(false);
 				}
 			}
-			
+
 			// Store a reference
-			TraceHitItem = HitItem;	
+			TraceHitItem = HitItem;
 		}
 	}
 
-	else if(TraceHitItem)
+	else if (TraceHitItem)
 	{
 		// No longer overlapping any item
 		TraceHitItem->GetPickupWidget()->SetVisibility(false);
 	}
 }
 
-void AShooterCharacter::SpawnDefaultWeapon()
+AWeapon* AShooterCharacter::SpawnDefaultWeapon() const
 {
-	if(DefaultWeaponClass)
+	if (DefaultWeaponClass)
 	{
 		AWeapon* DefaultWeapon = GetWorld()->SpawnActor<AWeapon>(DefaultWeaponClass);
+		return DefaultWeapon;
+	}
+	return nullptr;
+}
+
+void AShooterCharacter::EquipWeapon(AWeapon* WeaponToEquip)
+{
+	if (WeaponToEquip)
+	{
+		WeaponToEquip->GetAreaSphere()->SetCollisionResponseToAllChannels(ECR_Ignore);
+		WeaponToEquip->GetCollisionBox()->SetCollisionResponseToAllChannels(ECR_Ignore);
+
 		const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
-		if(DefaultWeapon && HandSocket)
+		if (HandSocket)
 		{
-			HandSocket->AttachActor(DefaultWeapon, GetMesh());
+			HandSocket->AttachActor(WeaponToEquip, GetMesh());
 		}
 
-		EquippedWeapon = DefaultWeapon;
+		EquippedWeapon = WeaponToEquip;
 	}
 }
 
@@ -506,7 +520,7 @@ float AShooterCharacter::GetCrosshairSpreadMultiplier() const
 
 void AShooterCharacter::IncrementOverlappedItemCount(const int8 Amount)
 {
-	if(OverlappedItemCount + Amount <= 0)
+	if (OverlappedItemCount + Amount <= 0)
 	{
 		OverlappedItemCount = 0;
 		bShoulTraceForItem = false;

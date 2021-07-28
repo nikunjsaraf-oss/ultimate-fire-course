@@ -45,7 +45,7 @@ protected:
 	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent*
 	                        OtherComp, int32 OtherBodyIndex);
 
-	
+
 	/**
 	 * @brief Set active stars boolean based on rarity
 	 */
@@ -106,4 +106,6 @@ private:
 
 public:
 	FORCEINLINE UWidgetComponent* GetPickupWidget() const { return PickupWidget; }
+	FORCEINLINE UBoxComponent* GetCollisionBox() const { return CollisionBox; }
+	FORCEINLINE USphereComponent* GetAreaSphere() const { return AreaSphere; }
 };
