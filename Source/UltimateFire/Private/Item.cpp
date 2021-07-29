@@ -147,6 +147,9 @@ void AItem::SetItemProperties(const EItemState State) const
 		break;
 
 	case EItemState::EIS_Equipped:
+
+		PickupWidget->SetVisibility(false);
+
 		ItemMesh->SetSimulatePhysics(false);
 		ItemMesh->SetEnableGravity(false);
 		ItemMesh->SetVisibility(true);
@@ -164,7 +167,7 @@ void AItem::SetItemProperties(const EItemState State) const
 		ItemMesh->SetSimulatePhysics(true);
 		ItemMesh->SetEnableGravity(true);
 		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
-		ItemMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); 
+		ItemMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 		ItemMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 		AreaSphere->SetCollisionResponseToAllChannels(ECR_Overlap);

@@ -147,13 +147,13 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	
+
 	PlayerInputComponent->BindAction("FireButton", IE_Pressed, this, &AShooterCharacter::FireButtonPressed);
 	PlayerInputComponent->BindAction("FireButton", IE_Released, this, &AShooterCharacter::FireButtonReleased);
-	
+
 	PlayerInputComponent->BindAction("AimingButton", IE_Pressed, this, &AShooterCharacter::AimingButtonPressed);
 	PlayerInputComponent->BindAction("AimingButton", IE_Released, this, &AShooterCharacter::AimingButtonReleased);
-	
+
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AShooterCharacter::InteractButtonPressed);
 	PlayerInputComponent->BindAction("Interact", IE_Released, this, &AShooterCharacter::InteractButtonReleased);
 }
@@ -230,11 +230,23 @@ void AShooterCharacter::LookUp(const float Value)
 
 void AShooterCharacter::InteractButtonPressed()
 {
-	DropWeapon();
+	if (TraceHitItemLastFrame)
+	{
+		AWeapon* TraceHitWeapon = Cast<AWeapon>(TraceHitItemLastFrame);
+		SwapWeapon(TraceHitWeapon);
+	}
 }
 
 void AShooterCharacter::InteractButtonReleased()
 {
+}
+
+void AShooterCharacter::SwapWeapon(AWeapon* WeaponToSwap)
+{
+	DropWeapon();
+	EquipWeapon(WeaponToSwap);
+	TracheHitItem = nullptr;
+	TraceHitItemLastFrame = nullptr;
 }
 
 
@@ -473,32 +485,32 @@ void AShooterCharacter::TraceForItems()
 		TraceUnderCrossHairs(ItemTraceResult, HitLocation);
 		if (ItemTraceResult.bBlockingHit)
 		{
-			AItem* HitItem = Cast<AItem>(ItemTraceResult.Actor);
-			if (HitItem && HitItem->GetPickupWidget())
+			TracheHitItem = Cast<AItem>(ItemTraceResult.Actor);
+			if (TracheHitItem && TracheHitItem->GetPickupWidget())
 			{
 				// Show Items pickup widget.
-				HitItem->GetPickupWidget()->SetVisibility(true);
+				TracheHitItem->GetPickupWidget()->SetVisibility(true);
 			}
 
 			// We hit an Item last frame
-			if (TraceHitItem)
+			if (TraceHitItemLastFrame)
 			{
-				if (HitItem != TraceHitItem)
+				if (TracheHitItem != TraceHitItemLastFrame)
 				{
 					// We are hitting Item this fram from last frame || Item is null
-					TraceHitItem->GetPickupWidget()->SetVisibility(false);
+					TraceHitItemLastFrame->GetPickupWidget()->SetVisibility(false);
 				}
 			}
 
 			// Store a reference
-			TraceHitItem = HitItem;
+			TraceHitItemLastFrame = TracheHitItem;
 		}
 	}
 
-	else if (TraceHitItem)
+	else if (TraceHitItemLastFrame)
 	{
 		// No longer overlapping any item
-		TraceHitItem->GetPickupWidget()->SetVisibility(false);
+		TraceHitItemLastFrame->GetPickupWidget()->SetVisibility(false);
 	}
 }
 
@@ -527,7 +539,8 @@ void AShooterCharacter::EquipWeapon(AWeapon* WeaponToEquip)
 	}
 }
 
-void AShooterCharacter::DropWeapon()
+
+void AShooterCharacter::DropWeapon() const
 {
 	if (EquippedWeapon)
 	{

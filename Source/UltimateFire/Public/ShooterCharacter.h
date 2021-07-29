@@ -156,10 +156,15 @@ protected:
 	/**
 	* @brief Detach weapon and let it fall to the ground.
 	*/
-	void DropWeapon();
+	void DropWeapon() const;
 
 	void InteractButtonPressed();
 	void InteractButtonReleased();
+
+	/**
+	 * @brief Drops currently equipped weapon and equips tracehit weapon
+	 */
+	void SwapWeapon(AWeapon* WeaponToSwap);
 
 public:
 	// Called every frame
@@ -386,7 +391,7 @@ private:
 	 * @brief The AItem we hit last frame.
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess = "true"))
-	class AItem* TraceHitItem;
+	class AItem* TraceHitItemLastFrame;
 
 	/**
 	 * @brief Currently equipped weapon
@@ -399,6 +404,12 @@ private:
 	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess = "true"))
 	TSubclassOf<AWeapon> DefaultWeaponClass;
+
+	/**
+	 * @brief Item currently hit by our trace hit for items (could be null)
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess = "true"))
+	AItem* TracheHitItem;
 
 public:
 	/**
