@@ -411,6 +411,18 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess = "true"))
 	AItem* TracheHitItem;
 
+	/**
+	 * @brief Distance outward from camera for the interp destination.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess = "true"))
+	float CameraInterpDistance;
+
+	/**
+	 * @brief Distance upward from camera for interp destination.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Items", meta=(AllowPrivateAccess = "true"))
+	float CameraInterpElevation;
+
 public:
 	/**
 	 * @brief Returns the CameraBoom Subobject
@@ -443,4 +455,16 @@ public:
 	 * @brief Adds/Subtracts to/from OverlappedItemCount and updates bShoulTraceForItem. 
 	 */
 	void IncrementOverlappedItemCount(int8 Amount);
+
+	/**
+	 * @brief Calculate and return the locaion of camera after interpolation
+	 * @return FVector CameraInterpLocation
+	 */
+	FVector GetCameraInterpLocation() const;
+
+	/**
+	 * @brief Call after interping finishes
+	 * @param Item Item to interp
+	 */
+	void GetPickupItem(AItem* Item);
 };

@@ -13,7 +13,11 @@ AItem::AItem()
 	: ItemName(FString("Default")),
 	  ItemCount(30),
 	  ItemRarity(EItemRarity::EIR_Common),
-	  ItemState(EItemState::EIS_Pickup)
+	  ItemState(EItemState::EIS_Pickup),
+	  ItemIterpStartLocation(FVector(0)),
+	  CameraTargetLocation(FVector(0)),
+	  bIsInterping(false),
+	  ZCurveTime(0.7f)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -181,6 +185,14 @@ void AItem::SetItemProperties(const EItemState State) const
 	}
 }
 
+void AItem::FinishInterping()
+{
+	if (Character)
+	{
+		Character->GetPickupItem(this);
+	}
+}
+
 // Called every frame
 void AItem::Tick(float DeltaTime)
 {
@@ -191,4 +203,16 @@ void AItem::SetItemState(const EItemState State)
 {
 	ItemState = State;
 	SetItemProperties(ItemState);
+}
+
+void AItem::StartItemCurve(AShooterCharacter* Char)
+{
+	Character = Char;
+
+	ItemIterpStartLocation = GetActorLocation(); // Store initial location of item
+
+	bIsInterping = true;
+	SetItemState(EItemState::EIS_EquipInterping);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_ItemInterp, this, &AItem::FinishInterping, ZCurveTime);
 }

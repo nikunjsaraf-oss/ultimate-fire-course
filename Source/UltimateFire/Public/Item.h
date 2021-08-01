@@ -31,6 +31,8 @@ enum class EItemState : uint8
 	EIS_MAX UMETA(DisplayName = "Default")
 };
 
+class AShooterCharacter;
+
 
 UCLASS()
 class ULTIMATEFIRE_API AItem : public AActor
@@ -70,6 +72,11 @@ protected:
 	 * @param State State of item to set
 	 */
 	void SetItemProperties(EItemState State) const;
+
+	/**
+	 * @brief Call when interp timer finishes
+	 */
+	void FinishInterping();
 
 public:
 	// Called every frame
@@ -130,6 +137,49 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
 	EItemState ItemState;
 
+	/**
+	 * @brief Curve used for interping
+	 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
+	class UCurveFloat* ItemZCurve;
+
+	/**
+	 * @brief Initial location when interping begins.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
+	FVector ItemIterpStartLocation;
+
+	/**
+	 * @brief Target interp location in front of the camera.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
+	FVector CameraTargetLocation;
+
+	/**
+	 * @brief True when interping
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
+	bool bIsInterping;
+
+	/**
+	 * @brief Plays when we start interping.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
+	FTimerHandle TimerHandle_ItemInterp;
+
+	/**
+	 * @brief Duration of curve and timer
+	 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
+	float ZCurveTime;
+
+	/**
+	 * @brief Pointer to the character
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
+	AShooterCharacter* Character;
+
+
 public:
 	FORCEINLINE UWidgetComponent* GetPickupWidget() const { return PickupWidget; }
 	FORCEINLINE UBoxComponent* GetCollisionBox() const { return CollisionBox; }
@@ -138,4 +188,8 @@ public:
 	FORCEINLINE USkeletalMeshComponent* GetItemMesh() const { return ItemMesh; }
 
 	void SetItemState(const EItemState State);
+	/**
+	 * @brief Call from shootercharacter class 
+	 */
+	void StartItemCurve(AShooterCharacter* ShooterCharacter);
 };
