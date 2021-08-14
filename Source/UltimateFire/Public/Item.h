@@ -78,6 +78,11 @@ protected:
 	 */
 	void FinishInterping();
 
+	/**
+	 * @brief Handles item interpolation when in equip interping state
+	 */
+	void ItemInterp(float DeltaTime);
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -147,7 +152,7 @@ private:
 	 * @brief Initial location when interping begins.
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ItemProperties", meta=(AllowPrivateAccess = "true"))
-	FVector ItemIterpStartLocation;
+	FVector ItemInterpStartLocation;
 
 	/**
 	 * @brief Target interp location in front of the camera.

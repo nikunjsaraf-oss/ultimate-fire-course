@@ -409,7 +409,7 @@ private:
 	 * @brief Item currently hit by our trace hit for items (could be null)
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess = "true"))
-	AItem* TracheHitItem;
+	AItem* TraceHitItem;
 
 	/**
 	 * @brief Distance outward from camera for the interp destination.
